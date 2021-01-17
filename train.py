@@ -11,7 +11,7 @@ from evaluate import evaluate
 from random import shuffle
 
 
-def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos):
+def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos, only_pos):
     """
     train aanvullen.
 
@@ -38,6 +38,8 @@ def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos):
 
         if with_pos:
             tag_scores = model(input_sentence, input_pos)
+        elif only_pos:
+            tag_scores = model(input_pos)
         else:
             tag_scores = model(input_sentence)
 
@@ -47,7 +49,7 @@ def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos):
 
     print("loss while training: ", loss.item())
 
-def train_and_evaluate(model, loss_fn, optimizer, epochs, train_data, val_data, batch_size, device, with_pos=False):
+def train_and_evaluate(model, loss_fn, optimizer, epochs, train_data, val_data, batch_size, device, with_pos=False, only_pos=False):
     """
     train and evaluate
     :param model:
@@ -73,14 +75,14 @@ def train_and_evaluate(model, loss_fn, optimizer, epochs, train_data, val_data, 
         train_data_batch = train_data.copy()
         num_steps = (len(train_data)) // batch_size
         for _ in range(num_steps):
-            train(model, batch_size, train_data_batch, loss_fn, optimizer, device, with_pos)
+            train(model, batch_size, train_data_batch, loss_fn, optimizer, device, with_pos, only_pos)
 
         # evaluate on val data
         shuffle(val_data)
         val_data_batch = val_data.copy()
         # todo: voeg de laatste parameters samen tot een dict
         model.eval()
-        eval_metrics = evaluate(model, val_data_batch, loss_fn, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device, with_pos)
+        eval_metrics = evaluate(model, val_data_batch, loss_fn, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device, with_pos, only_pos=only_pos)
 
         # save model last
         torch.save(model.state_dict(), 'model/last_model.pt')
@@ -189,9 +191,18 @@ if __name__ == '__main__':
     HIDDEN_DIM = 128
     pos_embedding_dim = 32
     word_embedding_dim = 20
-    # model = LSTMTagger(WORD_EMBEDDING_DIM, HIDDEN_DIM, len(word_to_ix), len(label_to_ix))
-    model = LSTMTagger_wPOS(word_embedding_dim, pos_embedding_dim, HIDDEN_DIM, len(word_to_ix), len(pos_to_ix), len(label_to_ix))
-    with_pos = True
+    with_pos = False
+    only_pos = True
+
+    # only words
+    # model = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(word_to_ix), len(label_to_ix))
+
+    # only pos
+    model = LSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, len(pos_to_ix), len(label_to_ix))
+
+    # pos and words
+    #model = LSTMTagger_wPOS(word_embedding_dim, pos_embedding_dim, HIDDEN_DIM, len(word_to_ix), len(pos_to_ix), len(label_to_ix))
+
 
     loss_function = nn.NLLLoss()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -202,8 +213,8 @@ if __name__ == '__main__':
     batch_size = 5
 
     # training
-    train_and_evaluate(model, loss_function, optimizer, epochs, idx_train_data, idx_val_data, batch_size, device, with_pos=with_pos)
+    train_and_evaluate(model, loss_function, optimizer, epochs, idx_train_data, idx_val_data, batch_size, device, with_pos=with_pos, only_pos=only_pos)
 
     model.load_state_dict(torch.load('model/best_model.pt'))
     # evaluate trained model
-    evaluate(model, idx_test_data, loss_function, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device, with_pos=with_pos, report=True)
+    evaluate(model, idx_test_data, loss_function, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device, with_pos=with_pos, only_pos=only_pos, report=True)

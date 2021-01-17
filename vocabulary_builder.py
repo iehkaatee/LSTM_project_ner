@@ -126,13 +126,13 @@ def store_prossed_data(task_path, data_path, task_dir, sub_dir):
 if __name__ == '__main__':
 
     # comment
-    data_path = 'data/data_pos_ner_small'
+    data_path = 'data/data_pos_srl'
     SONAR_path = 'data/SONAR/TASKS'
 
     store_prossed_data(SONAR_path, data_path, 'POS', 'pos_coarse')
-    store_prossed_data(SONAR_path, data_path, 'NER', 'ner')
+    store_prossed_data(SONAR_path, data_path, 'SRL', 'srl_main')
 
-    data_path_ner = os.path.join(data_path, 'NER')
+    data_path_ner = os.path.join(data_path, 'SRL')
     data_path_pos = os.path.join(data_path, 'POS')
 
     ner_train_sentence_path = os.path.join(data_path_ner, 'train/sentences.txt')

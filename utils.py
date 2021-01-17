@@ -29,17 +29,26 @@ def load_data(path, data_list, as_list=True):
             for l in f.read().splitlines():
                 data_list.append(l)
 
-def append_to_vocab(data, word_to_ix, label_to_ix, pos_to_ix):
+def append_to_vocab(data, word_to_ix, label_to_ix, pos_to_ix, with_pos=False):
     """
         create and increase the vocabulary with data being used.
     """
-    for sentence, pos, labels in data:
-        for word in sentence:
-            if word not in word_to_ix:
-                word_to_ix[word] = len(word_to_ix)
-        for label in labels:
-            if label not in label_to_ix:
-                label_to_ix[label] = len(label_to_ix)
-        for tag in pos:
-            if tag not in pos_to_ix:
-                pos_to_ix[tag] = len(pos_to_ix)
+    if with_pos:
+        for sentence, pos, labels in data:
+            for word in sentence:
+                if word not in word_to_ix:
+                    word_to_ix[word] = len(word_to_ix)
+            for label in labels:
+                if label not in label_to_ix:
+                    label_to_ix[label] = len(label_to_ix)
+            for tag in pos:
+                if tag not in pos_to_ix:
+                    pos_to_ix[tag] = len(pos_to_ix)
+    else:
+        for sentence, labels in data:
+            for word in sentence:
+                if word not in word_to_ix:
+                    word_to_ix[word] = len(word_to_ix)
+            for label in labels:
+                if label not in label_to_ix:
+                    label_to_ix[label] = len(label_to_ix)
