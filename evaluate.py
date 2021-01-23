@@ -1,7 +1,3 @@
-"""
-    evaluate function
-"""
-
 import os
 from random import shuffle
 import torch
@@ -15,7 +11,7 @@ from model.model import LSTMTagger, LSTMTagger_wPOS
 def evaluate(model, eval_data, loss_fn, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device='cpu', with_pos=False,
                 only_pos=False, report=False, show_sentence=False):
     """
-        eval model
+        evaluate method
     """
 
     model.eval()
@@ -134,7 +130,9 @@ def evaluate(model, eval_data, loss_fn, word_to_ix, label_to_ix, ix_to_label, ix
     return eval_metrics
 
 def prepare_data(path, with_pos=False):
-
+    """
+        prepare data before training/evaluating
+    """
     print("------- prep data --------")
     # Load data
     sentence_path = os.path.join(path, 'train/sentences.txt')

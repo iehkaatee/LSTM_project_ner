@@ -1,28 +1,16 @@
-"""
-Train
-"""
 import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import utils
-from model.model import LSTMTagger, LSTMTagger_wPOS, double_LSTMTagger_wPOS
+from model.model import LSTMTagger, LSTMTagger_wPOS
 from evaluate import evaluate
 from random import shuffle
 
 
 def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos, only_pos):
     """
-    train aanvullen.
-
-    :param model:
-    :param batch_size:
-    :param train_data:
-    :param loss_fn:
-    :param optimizer:
-    :param device:
-    :param with_pos:
-    :return:
+    train model
     """
 
     for i in range(batch_size):
@@ -51,19 +39,8 @@ def train(model, batch_size, train_data, loss_fn, optimizer, device, with_pos, o
 
 def train_and_evaluate(model, loss_fn, optimizer, epochs, train_data, val_data, batch_size, device, with_pos=False, only_pos=False):
     """
-    train and evaluate
-    :param model:
-    :param loss_fn:
-    :param optimizer:
-    :param epochs:
-    :param train_data:
-    :param val_data:
-    :param batch_size:
-    :param device:
-    :param with_pos:
-    :return:
+        train and evaluate a model
     """
-
     best_score = 0.0
 
     for epoch in range(epochs):
@@ -80,7 +57,6 @@ def train_and_evaluate(model, loss_fn, optimizer, epochs, train_data, val_data, 
         # evaluate on val data
         shuffle(val_data)
         val_data_batch = val_data.copy()
-        # todo: voeg de laatste parameters samen tot een dict
         model.eval()
         eval_metrics = evaluate(model, val_data_batch, loss_fn, word_to_ix, label_to_ix, ix_to_label, ix_to_word, device, with_pos, only_pos=only_pos)
 

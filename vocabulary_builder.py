@@ -1,12 +1,5 @@
 """
-Build a vocabulary consisting of words and corresponding labels from a dataset
-
-todo:
-
-- kijk naar:
-    import nltk
-    nltk.download('punkt')
-    for word in nltk.word_tokenize(s): #Tokenizing the words
+    Build a vocabulary consisting of words and corresponding labels from a dataset
 """
 
 
@@ -48,10 +41,7 @@ def fill_vocab(path, vocab):
 
 def preprocess_data(path, size):
     """
-
-    :param path:
-    :param size:
-    :return:
+        preprocess data and strucure it
     """
     preprocess_sentences = []
     preprocess_labels = []
